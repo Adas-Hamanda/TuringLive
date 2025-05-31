@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/iv66/TuringLive/build",
+  "command": "/usr/bin/clang -g -o CMakeFiles/TuringLive.dir/main.c.o -c /home/iv66/TuringLive/main.c",
+  "file": "/home/iv66/TuringLive/main.c"
+}
+]

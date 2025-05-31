@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.25.1)
+project(TuringLive)
+if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+set(CMAKE_CXX_COMPILER "clang++")
+set(CMAKE_C_COMPILER "clang")
+endif()
+set(CMAKE_GENERATOR "Ninja")
+add_executable(TuringLive main.c)
