@@ -1,3 +1,0 @@
-/home/iv66/TuringLive/build/CMakeFiles/TuringLive.dir
-/home/iv66/TuringLive/build/CMakeFiles/edit_cache.dir
-/home/iv66/TuringLive/build/CMakeFiles/rebuild_cache.dir
