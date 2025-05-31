@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
+#include <SDL3/SDL.h>
+#include <SDL_ttf.h>
 
 typedef struct
 {
@@ -99,6 +101,27 @@ int Step(Program *pgm)
 }
 int main()
 {
+    printf("SDL Version:%d\n", SDL_VERSION);
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    {
+    }
+    SDL_Window *window = SDL_CreateWindow("TuringLive", 800, 600, SDL_WINDOW_RESIZABLE);
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
+    {
+        switch (event.type)
+        {
+
+        case SDL_EVENT_QUIT:
+            SDL_DestroyWindow(window);
+            SDL_Quit();
+            break;
+
+        default:
+            break;
+        }
+    }
+
     srand(time(NULL));
     Program pgm;
     CreateProgram(&pgm, 256);

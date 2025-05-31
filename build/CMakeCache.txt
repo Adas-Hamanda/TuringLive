@@ -213,6 +213,12 @@ Project_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 Project_SOURCE_DIR:STATIC=/home/iv66/TuringLive
 
+//The directory containing a CMake configuration file for SDL2.
+SDL2_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/SDL2
+
+//The directory containing a CMake configuration file for SDL2_ttf.
+SDL2_ttf_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/SDL2_ttf
+
 //Value Computed by CMake
 TuringLive_BINARY_DIR:STATIC=/home/iv66/TuringLive/build
 
