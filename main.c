@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-#include <SDL3/SDL.h>
-#include <SDL_ttf.h>
+#include <SDL2/SDL.h>
+// #include <SDL_ttf.h>
+#include <SDL2/SDL_main.h>
+#include <SDL2/SDL_thread.h>
+#include <stdbool.h>
 
 typedef struct
 {
@@ -99,29 +102,10 @@ int Step(Program *pgm)
         pgm->point = pgm->data;
     return 0;
 }
-int main()
+bool bwork_thread_run = true;
+int evTyStep;
+int WorkThread(void *data)
 {
-    printf("SDL Version:%d\n", SDL_VERSION);
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-    {
-    }
-    SDL_Window *window = SDL_CreateWindow("TuringLive", 800, 600, SDL_WINDOW_RESIZABLE);
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
-    {
-        switch (event.type)
-        {
-
-        case SDL_EVENT_QUIT:
-            SDL_DestroyWindow(window);
-            SDL_Quit();
-            break;
-
-        default:
-            break;
-        }
-    }
-
     srand(time(NULL));
     Program pgm;
     CreateProgram(&pgm, 256);
@@ -129,31 +113,65 @@ int main()
     {
         *i = rand();
     }
-
-    while (1)
+    evTyStep = SDL_RegisterEvents(1);
+    if (evTyStep == -1)
     {
-        system("clear");
+        SDL_LogDebug(SDL_LOG_PRIORITY_ERROR, "SDL Error at:%s\n", SDL_GetError());
+    }
+    SDL_Event evStep;
+    evStep.type = evTyStep;
+    evStep.user.data1 = (void *)&pgm;
+    while (bwork_thread_run)
+    {
+
         Step(&pgm);
-        int cow = 10;
-        for (uint8_t *j = pgm.data; j < pgm.tail; j++)
+        if (!SDL_PushEvent(&evStep))
         {
-            // printf("h\n");
-            if (j == pgm.point)
-            {
-                printf("\033[32;40m%3d \033[0m", *j);
-            }
-            else
-            {
-                printf("%3d ", *j);
-            }
-            if ((pgm.tail - j + 1) % cow == 0)
-            {
-                printf("\n");
-            }
+            SDL_LogDebug(SDL_LOG_PRIORITY_ERROR, "SDL Error at:%s\n", SDL_GetError());
         }
-        if (getchar() == 'c')
-            break;
     }
 
     DestroyProgram(&pgm);
+}
+int main(int argc, char **argv)
+{
+    // printf("SDL Version:%d\n", SDL_VERSION);
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    {
+        SDL_LogDebug(SDL_LOG_PRIORITY_ERROR, "SDL Error at:%s\n", SDL_GetError());
+    }
+    SDL_Window *window = SDL_CreateWindow("TuringLive", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
+    if (window == NULL)
+    {
+        SDL_LogDebug(SDL_LOG_PRIORITY_ERROR, "SDL Error at:%s\n", SDL_GetError());
+    }
+
+    SDL_Thread *work_thread = SDL_CreateThread(WorkThread, "Work", NULL);
+    if (work_thread == NULL)
+    {
+        SDL_LogDebug(SDL_LOG_PRIORITY_ERROR, "SDL Error at:%s\n", SDL_GetError());
+    }
+    SDL_Event event;
+    while (SDL_WaitEvent(&event))
+    {
+        // printf("event!\n");
+        switch (event.type)
+        {
+
+        case SDL_QUIT:
+            // printf("quit!\n");
+            bwork_thread_run = false;
+            SDL_DestroyWindow(window);
+            SDL_Quit();
+            break;
+        default:
+            if (event.type == evTyStep)
+            {
+                        }
+
+            break;
+        }
+    }
+    SDL_WaitThread(work_thread, NULL);
+    return 0;
 }
